@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet; // importing Set and HashSet to accommodate multiple user roles, stored as a Set in the user class
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors; //importing collectors to handle Set to string conversion
 
 import application.User;
 
@@ -67,6 +70,15 @@ public class DatabaseHelper {
 		}
 		return true;
 	}
+    // Convert Set of roles into string
+    private String convertRolesToString(Set<String> roles) {
+        return roles.stream().collect(Collectors.joining(","));
+    }
+
+    // Converts a comma-separated String to a Set of roles
+    private Set<String> convertStringToRoles(String rolesString) {
+        return new HashSet<>(Set.of(rolesString.split(","))); 
+    }
 
 	// Registers a new user in the database.
 	public void register(User user) throws SQLException {
@@ -74,7 +86,7 @@ public class DatabaseHelper {
 		try (PreparedStatement pstmt = connection.prepareStatement(insertUser)) {
 			pstmt.setString(1, user.getUserName());
 			pstmt.setString(2, user.getPassword());
-			pstmt.setString(3, user.getRole());
+			pstmt.setString(3, convertRolesToString(user.getRole())); //calling the set converter before usre.getRole
 			pstmt.executeUpdate();
 		}
 	}
@@ -85,7 +97,7 @@ public class DatabaseHelper {
 		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 			pstmt.setString(1, user.getUserName());
 			pstmt.setString(2, user.getPassword());
-			pstmt.setString(3, user.getRole());
+			pstmt.setString(3, convertRolesToString(user.getRole())); //calling the set converter before usre.getRole
 			try (ResultSet rs = pstmt.executeQuery()) {
 				return rs.next();
 			}

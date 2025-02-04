@@ -13,7 +13,7 @@ import databasePart1.*;
  * The SetupAdmin class handles the setup process for creating an administrator account.
  * This is intended to be used by the first user to initialize the system with admin credentials.
  */
-public class AdminSetupPage {
+public class AdminSetupPage extends PasswordEvaluator{
 	
     private final DatabaseHelper databaseHelper;
 

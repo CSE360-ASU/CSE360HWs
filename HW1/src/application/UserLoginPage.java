@@ -50,7 +50,7 @@ public class UserLoginPage {
             	String role = databaseHelper.getUserRole(userName);
             	
             	if(role!=null) {
-            		user.setRole(role);
+            		user.addRole(role); //changed setRole to addRole as part of enabling multiple user roles
             		if(databaseHelper.login(user)) {
             			welcomeLoginPage.show(primaryStage,user);
             		}

@@ -9,11 +9,20 @@ public class UserNameRecognizer {
 	 * diagram into an executable Java program using the UserName Recognizer. The code 
 	 * detailed design is based on a while loop with a select list</p>
 	 * 
+	 * <p> Copyright: Lynn Robert Carter © 2024 </p>
 	 * 
-	 * @author Shashwat Raj
+	 * @author Lynn Robert Carter
 	 * 
+	 * @version 1.00		2024-09-13	Initial baseline derived from the Even Recognizer
+	 * @version 1.01		2024-09-17	Correction to address UNChar coding error, improper error
+	 * 									message, and improve internal documentation
 	 * 
-	 * @version 1.00		2025-01-26	
+	 */
+
+	/**********************************************************************************************
+	 * 
+	 * Result attributes to be used for GUI applications where a detailed error message and a 
+	 * pointer to the character of the error will enhance the user experience.
 	 * 
 	 */
 
@@ -98,12 +107,14 @@ public class UserNameRecognizer {
 			case 0: 
 				// State 0 has 1 valid transition that is addressed by an if statement.
 				
-				// The current character is checked against A-Z, a-z. If any are matched
+				// The current character is checked against A-Z, a-z, 0-9. If any are matched
 				// the FSM goes to state 1
 				
-				// A-Z, a-z -> State 1
+				// A-Z, a-z, 0-9 -> State 1
 				if ((currentChar >= 'A' && currentChar <= 'Z' ) ||		// Check for A-Z
-						(currentChar >= 'a' && currentChar <= 'z' )) {	// Check for a-z
+						(currentChar >= 'a' && currentChar <= 'z' ))	// Check for a-z
+						//(currentChar >= '0' && currentChar <= '9' )) // removed check for 0-9, only alphabetic characters allowed for this transition
+					{
 					nextState = 1;
 					
 					// Count the character 
@@ -122,7 +133,7 @@ public class UserNameRecognizer {
 			case 1: 
 				// State 1 has two valid transitions, 
 				//	1: a A-Z, a-z, 0-9 that transitions back to state 1
-				//  2: a period that transitions to state 2 
+				//  2: a period, hyphen, or underscore that transitions to state 2 
 
 				
 				// A-Z, a-z, 0-9 -> State 1
@@ -134,11 +145,13 @@ public class UserNameRecognizer {
 					// Count the character
 					userNameSize++;
 				}
-				// . -> State 3
-				else if ((currentChar == '.') || (currentChar == '-') || (currentChar == '_')) {							// Check for /
+				// . -> State 2
+				else if ((currentChar == '.') || 
+						(currentChar == '-') || 						//allow hyphens
+						(currentChar == '_')){							//allow underscores
 					nextState = 2;
 					
-					// Count the period, underscore or minus between characters.
+					// Count the .
 					userNameSize++;
 				}				
 				// If it is none of those characters, the FSM halts
@@ -150,13 +163,11 @@ public class UserNameRecognizer {
 				if (userNameSize > 16)
 					running = false;
 				break;			
-			
-						
 				
 			case 2: 
-				// State 3 deals with a character after a period in the name.
+				// State 2 deals with a character after a period in the name.
 				
-				// A-Z, a-z, 0-9 -> State 2
+				// A-Z, a-z, 0-9 -> State 1
 				if ((currentChar >= 'A' && currentChar <= 'Z' ) ||		// Check for A-Z
 						(currentChar >= 'a' && currentChar <= 'z' ) ||	// Check for a-z
 						(currentChar >= '0' && currentChar <= '9' )) {	// Check for 0-9
@@ -212,8 +223,7 @@ public class UserNameRecognizer {
 		// The following code is a slight variation to support just console output.
 		switch (state) {
 		case 0:
-			// State 0 is not a final state, so we can return a very specific error message. 
-			//First Character must be alphabet.
+			// State 0 is not a final state, so we can return a very specific error message
 			userNameRecognizerErrorMessage += "A UserName must start with A-Z or a-z\n";
 			return userNameRecognizerErrorMessage;
 
@@ -235,7 +245,7 @@ public class UserNameRecognizer {
 			else if (currentCharNdx < input.length()) {
 				// There are characters remaining in the input, so the input is not valid
 				userNameRecognizerErrorMessage += 
-					"A UserName character may only contain the characters A-Z, a-z, 0-9.\n";
+					"A UserName character may only contain the characters A-Z, a-z, 0-9, -, or _\n";
 				return userNameRecognizerErrorMessage;
 			}
 			else {

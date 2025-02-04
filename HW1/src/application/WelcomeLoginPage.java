@@ -5,6 +5,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+
+import java.util.Set;
+
 import databasePart1.*;
 
 /**
@@ -29,7 +32,7 @@ public class WelcomeLoginPage {
 	    // Button to navigate to the user's respective page based on their role
 	    Button continueButton = new Button("Continue to your Page");
 	    continueButton.setOnAction(a -> {
-	    	String role =user.getRole();
+	    	Set<String> role =user.getRole();
 	    	System.out.println(role);
 	    	
 	    	if(role.equals("admin")) {

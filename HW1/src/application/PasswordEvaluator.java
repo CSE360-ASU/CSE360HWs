@@ -1,7 +1,7 @@
 package application;
 
 
-public class PasswordEvaluator {
+public class PasswordEvaluator extends UserNameRecognizer{
 	/**
 	 * <p> Title: Directed Graph-translated Password Assessor. </p>
 	 * 
@@ -9,11 +9,11 @@ public class PasswordEvaluator {
 	 * diagram into an executable Java program using the Password Evaluator Directed Graph. 
 	 * The code detailed design is based on a while loop with a cascade of if statements</p>
 	 * 
-	 *
+	 * <p> Copyright: Lynn Robert Carter © 2022 </p>
 	 * 
-	 * @author Shashwat Raj
+	 * @author Lynn Robert Carter
 	 * 
-	 * @version 0.00		2025-01-26	 
+	 * @version 0.00		2018-02-22	Initial baseline 
 	 * 
 	 */
 
@@ -32,7 +32,7 @@ public class PasswordEvaluator {
 	public static boolean foundNumericDigit = false;
 	public static boolean foundSpecialChar = false;
 	public static boolean foundLongEnough = false;
-	public static boolean foundOtherChar = false;
+	public static boolean foundOtherChar = false; //added variable otherChar 
 	private static String inputLine = "";				// The input line
 	private static char currentChar;					// The current character in the line
 	private static int currentCharNdx;					// The index of the current character
@@ -75,8 +75,6 @@ public class PasswordEvaluator {
 		
 		if(input.length() <= 0) return "*** Error *** The password is empty!";
 		
-		
-		
 		// The input is not empty, so we can access the first character
 		currentChar = input.charAt(0);		// The current character from the above indexed position
 
@@ -90,7 +88,7 @@ public class PasswordEvaluator {
 		foundSpecialChar = false;			// Reset the Boolean flag
 		foundNumericDigit = false;			// Reset the Boolean flag
 		foundLongEnough = false;			// Reset the Boolean flag
-		foundOtherChar = false;             // Reset the Boolean flag (for otherChar as stated in FSM)
+		foundOtherChar = false; 					// reset the Boolean flag
 		running = true;						// Start the loop
 
 		// The Directed Graph simulation continues until the end of the input is reached or at some 
@@ -99,7 +97,6 @@ public class PasswordEvaluator {
 			displayInputState();
 			// The cascading if statement sequentially tries the current character against all of the
 			// valid transitions
-			
 			if (currentChar >= 'A' && currentChar <= 'Z') {
 				System.out.println("Upper case letter found");
 				foundUpperCase = true;
@@ -109,17 +106,15 @@ public class PasswordEvaluator {
 			} else if (currentChar >= '0' && currentChar <= '9') {
 				System.out.println("Digit found");
 				foundNumericDigit = true;
-			} else  if ("~`!@#$%^&*()_-+={}[]|:,.?/".indexOf(currentChar) >= 0) { //Added the required valid characters only
+			} else if ("~`!@#$%^&*()_-+{}[]|:;\',.?/".indexOf(currentChar) >= 0) { //removed special chars not in UML
 				System.out.println("Special character found");
 				foundSpecialChar = true;
-			} else { //ANY OTHER UNKNOWN CHARACTER LIKE \ OR " " 
-				foundOtherChar = true;  
-	            System.out.println("Other unknown character found"); //Prints the error informing the user 
-				
+			} else {
 				passwordIndexofError = currentCharNdx;
+				foundOtherChar = true; 
 				return "*** Error *** An invalid character has been found!";
 			}
-			if (currentCharNdx >= 8) {
+			if (currentCharNdx >= 7) { 
 				System.out.println("At least 8 characters found");
 				foundLongEnough = true;
 			}
@@ -135,7 +130,6 @@ public class PasswordEvaluator {
 		}
 		
 		String errMessage = "";
-		
 		if (!foundUpperCase)
 			errMessage += "Upper case; ";
 		
@@ -150,9 +144,6 @@ public class PasswordEvaluator {
 			
 		if (!foundLongEnough)
 			errMessage += "Long Enough; ";
-		
-		if (foundOtherChar)       
-			errMessage += "Other (invalid) character; ";
 		
 		if (errMessage == "")
 			return "";
