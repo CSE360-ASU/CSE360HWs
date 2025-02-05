@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import java.util.Set;
 
 import java.sql.SQLException;
 
@@ -47,10 +48,14 @@ public class UserLoginPage {
             	WelcomeLoginPage welcomeLoginPage = new WelcomeLoginPage(databaseHelper);
             	
             	// Retrieve the user's role from the database using userName
-            	String role = databaseHelper.getUserRole(userName);
+            	Set<String> role = databaseHelper.getUserRole(userName);
+            	
             	
             	if(role!=null) {
-            		user.addRole(role); //changed setRole to addRole as part of enabling multiple user roles
+            		for (String roles : role) {
+            		    user.addRole(roles);
+            		}
+            		//user.addRole(role); //changed setRole to addRole as part of enabling multiple user roles
             		if(databaseHelper.login(user)) {
             			welcomeLoginPage.show(primaryStage,user);
             		}

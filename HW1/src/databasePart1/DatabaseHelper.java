@@ -121,26 +121,26 @@ public class DatabaseHelper {
 
 	    if (dbHelper.doesUserExist(userName)) {
 	        // Fetch the current roles from the database
-	        String rolesString = dbHelper.getUserRole(userName);
-	        Set<String> currentRoles = convertStringToRoles(rolesString);
+	        Set<String> rolesString = dbHelper.getUserRole(userName);
+	        //Set<String> currentRoles = convertStringToRoles(rolesString);
 
 	        // Create a User object
 	        User user = new User(userName, null, null);
 
 	        // Add the User's old roles to user object
-	        for (String existingRole : currentRoles) {
+	        for (String existingRole : rolesString) {
 	            user.addRole(existingRole);
 	        }
 
 	        // Add the new role, check for duplicates
-	        if (!currentRoles.contains(role)) {
+	        if (!rolesString.contains(role)) {
 	            user.addRole(role);
-	            currentRoles.add(role);
+	            rolesString.add(role);
 
 	            // Update the database
 	            String updateRolesQuery = "UPDATE cse360users SET role = ? WHERE userName = ?";
 	            try (PreparedStatement updatePstmt = dbHelper.connection.prepareStatement(updateRolesQuery)) {
-	                updatePstmt.setString(1, convertRolesToString(currentRoles));
+	                updatePstmt.setString(1, convertRolesToString(rolesString));
 	                updatePstmt.setString(2, userName);
 	                updatePstmt.executeUpdate();
 	            }
@@ -169,14 +169,15 @@ public class DatabaseHelper {
 	}
 	
 	// Retrieves the role of a user from the database using their UserName.
-	public String getUserRole(String userName) {
+	public Set<String> getUserRole(String userName) {
 	    String query = "SELECT role FROM cse360users WHERE userName = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 	        pstmt.setString(1, userName);
 	        ResultSet rs = pstmt.executeQuery();
 	        
 	        if (rs.next()) {
-	            return rs.getString("role"); // Return the role if user exists
+	            String roleString = rs.getString("role"); // Return the role if user exists
+	            return convertStringToRoles(roleString);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();

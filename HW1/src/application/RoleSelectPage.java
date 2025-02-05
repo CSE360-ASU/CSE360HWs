@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.util.Set;
+import databasePart1.DatabaseHelper;
+
 
 /**
  * This page displays all the roles available to the user.
@@ -13,7 +15,13 @@ import java.util.Set;
  */
 
 public class RoleSelectPage {
+		// added databaseHelper to pass to AdminHomePage
+	    private final DatabaseHelper databaseHelper;
 
+	    public RoleSelectPage(DatabaseHelper databaseHelper) {
+	        this.databaseHelper = databaseHelper;
+	    }
+	
     public void show(Stage primaryStage, User user) {
     	VBox layout = new VBox();
 	    layout.setStyle("-fx-alignment: center; -fx-padding: 20;");
@@ -30,8 +38,13 @@ public class RoleSelectPage {
         Set<String> roles = user.getRole();
         if (roles.contains("admin")) {
             Button adminButton = new Button("Admin");
-            adminButton.setOnAction(a -> new AdminHomePage(null).show(primaryStage));
+            adminButton.setOnAction(a -> new AdminHomePage(databaseHelper).show(primaryStage));
             layout.getChildren().add(adminButton);
+        }
+        if (roles.contains("user")) {
+            Button userButton = new Button("user");
+            userButton.setOnAction(a -> new UserHomePage().show(primaryStage));
+            layout.getChildren().add(userButton);
         }
         if (roles.contains("student")) {
             Button studentButton = new Button("Student");

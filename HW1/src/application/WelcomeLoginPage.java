@@ -33,9 +33,9 @@ public class WelcomeLoginPage {
 	    Button continueButton = new Button("Continue to your Page");
 	    continueButton.setOnAction(a -> {
 	    	Set<String> role =user.getRole();
-	    	System.out.println(role);
-	    	//updated for multiple user roles, if a user has only 1 role, they go to that page, otherwise to a role selection page
+	    	//updated for multiple user roles, if a user has only 1 role (start counting from 0, they go to that page, otherwise to a role selection page
 	    	if (role.size() == 1) {
+	    		System.out.println("first if activated for role.size() == 1");
 		    	if(role.contains("admin")) {
 		    		new AdminHomePage(databaseHelper).show(primaryStage);
 		    	}
@@ -45,7 +45,8 @@ public class WelcomeLoginPage {
 	    	}
 	    	// user has > 1 role, go to role selection page (needs adjustment)
 	    	else {
-	    		new RoleSelectPage().show(primaryStage, user);
+	    		System.out.println("Else activated");
+	    		new RoleSelectPage(databaseHelper).show(primaryStage, user);
 	    	}
 	    });
 	    
