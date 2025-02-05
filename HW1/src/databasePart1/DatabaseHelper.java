@@ -114,21 +114,40 @@ public class DatabaseHelper {
 
 	//method to add a role to user
 	//check that user exists and they are not currently assigned that role
+
 	public void addUserRole(String userName, String role) throws SQLException {
-		//String userName = user.getUserName();
-		//User user = new User (userName, null, null);
 	    DatabaseHelper dbHelper = new DatabaseHelper();
 	    dbHelper.connectToDatabase();
-		String roles = dbHelper.getUserRole(userName);
-		if (dbHelper.doesUserExist(userName) && !roles.contains(role)) {
-			//user.addRole(role);
-            String updateRolesQuery = "UPDATE cse360users SET role = ? WHERE userName = ?";
-            try (PreparedStatement updatePstmt = dbHelper.connection.prepareStatement(updateRolesQuery)) {
-                updatePstmt.setString(1, roles);
-                updatePstmt.setString(2, userName);
-                updatePstmt.executeUpdate();
-            }
-		}
+
+	    if (dbHelper.doesUserExist(userName)) {
+	        // Fetch the current roles from the database
+	        String rolesString = dbHelper.getUserRole(userName);
+	        Set<String> currentRoles = convertStringToRoles(rolesString);
+
+	        // Create a User object
+	        User user = new User(userName, null, null);
+
+	        // Add the User's old roles to user object
+	        for (String existingRole : currentRoles) {
+	            user.addRole(existingRole);
+	        }
+
+	        // Add the new role, check for duplicates
+	        if (!currentRoles.contains(role)) {
+	            user.addRole(role);
+	            currentRoles.add(role);
+
+	            // Update the database
+	            String updateRolesQuery = "UPDATE cse360users SET role = ? WHERE userName = ?";
+	            try (PreparedStatement updatePstmt = dbHelper.connection.prepareStatement(updateRolesQuery)) {
+	                updatePstmt.setString(1, convertRolesToString(currentRoles));
+	                updatePstmt.setString(2, userName);
+	                updatePstmt.executeUpdate();
+	            }
+	        }
+	    }
+
+	    dbHelper.closeConnection();
 	}
 	
 	// Checks if a user already exists in the database based on their userName.
