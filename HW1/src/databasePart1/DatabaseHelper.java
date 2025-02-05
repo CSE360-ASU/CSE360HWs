@@ -116,12 +116,18 @@ public class DatabaseHelper {
 	//check that user exists and they are not currently assigned that role
 	public void addUserRole(String userName, String role) throws SQLException {
 		//String userName = user.getUserName();
-		User user = new User (userName, null, role);
-		Set<String> roles = user.getRole();
+		//User user = new User (userName, null, null);
 	    DatabaseHelper dbHelper = new DatabaseHelper();
 	    dbHelper.connectToDatabase();
+		String roles = dbHelper.getUserRole(userName);
 		if (dbHelper.doesUserExist(userName) && !roles.contains(role)) {
-			user.addRole(role);
+			//user.addRole(role);
+            String updateRolesQuery = "UPDATE cse360users SET role = ? WHERE userName = ?";
+            try (PreparedStatement updatePstmt = dbHelper.connection.prepareStatement(updateRolesQuery)) {
+                updatePstmt.setString(1, roles);
+                updatePstmt.setString(2, userName);
+                updatePstmt.executeUpdate();
+            }
 		}
 	}
 	
