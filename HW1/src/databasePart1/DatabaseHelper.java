@@ -27,7 +27,7 @@ public class DatabaseHelper {
 	private Statement statement = null; 
 	//	PreparedStatement pstmt
 
-	public void connectToDatabase() throws SQLException {
+	public Connection connectToDatabase() throws SQLException {
 		try {
 			Class.forName(JDBC_DRIVER); // Load the JDBC driver
 			System.out.println("Connecting to database...");
@@ -37,8 +37,11 @@ public class DatabaseHelper {
 			//statement.execute("DROP ALL OBJECTS");
 
 			createTables();  // Create the necessary tables if they don't exist
+			
+			return connection;
 		} catch (ClassNotFoundException e) {
 			System.err.println("JDBC Driver not found: " + e.getMessage());
+			return null;
 		}
 	}
 
@@ -168,7 +171,7 @@ public class DatabaseHelper {
 	        e.printStackTrace();
 	    }
 	}
-
+	
 	// Closes the database connection and statement.
 	public void closeConnection() {
 		try{ 
@@ -182,5 +185,7 @@ public class DatabaseHelper {
 			se.printStackTrace(); 
 		} 
 	}
+	
+	// Returns a list of all of the users in the database
 
 }
