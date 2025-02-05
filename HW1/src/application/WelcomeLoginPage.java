@@ -34,12 +34,18 @@ public class WelcomeLoginPage {
 	    continueButton.setOnAction(a -> {
 	    	Set<String> role =user.getRole();
 	    	System.out.println(role);
-	    	
-	    	if(role.equals("admin")) {
-	    		new AdminHomePage().show(primaryStage);
+	    	//updated for multiple user roles, if a user has only 1 role, they go to that page, otherwise to a role selection page
+	    	if (role.size() == 1) {
+		    	if(role.contains("admin")) {
+		    		new AdminHomePage().show(primaryStage);
+		    	}
+		    	else if(role.contains("user")) {
+		    		new UserHomePage().show(primaryStage);
+		    	}
 	    	}
-	    	else if(role.equals("user")) {
-	    		new UserHomePage().show(primaryStage);
+	    	// user has > 1 role, go to role selection page (needs adjustment)
+	    	else {
+	    		new RoleSelectPage().show(primaryStage);
 	    	}
 	    });
 	    
@@ -51,7 +57,8 @@ public class WelcomeLoginPage {
 	    });
 	    
 	    // "Invite" button for admin to generate invitation codes
-	    if ("admin".equals(user.getRole())) {
+//	    if ("admin".equals(user.getRole())) {
+	    if (user.getRole().contains("admin")) {	    //updated the role check to work with multiple user roles
             Button inviteButton = new Button("Invite");
             inviteButton.setOnAction(a -> {
                 new InvitationPage().show(databaseHelper, primaryStage);

@@ -72,8 +72,11 @@ public class DatabaseHelper {
 	}
     // Convert Set of roles into string
     private String convertRolesToString(Set<String> roles) {
-        return roles.stream().collect(Collectors.joining(","));
+    	return roles.stream()
+    		.filter(role -> role != null && !role.isEmpty()) // Exclude null or empty roles
+    	    .collect(Collectors.joining(","));
     }
+    
 
     // Converts a comma-separated String to a Set of roles
     private Set<String> convertStringToRoles(String rolesString) {
@@ -86,7 +89,7 @@ public class DatabaseHelper {
 		try (PreparedStatement pstmt = connection.prepareStatement(insertUser)) {
 			pstmt.setString(1, user.getUserName());
 			pstmt.setString(2, user.getPassword());
-			pstmt.setString(3, convertRolesToString(user.getRole())); //calling the set converter before usre.getRole
+			pstmt.setString(3, convertRolesToString(user.getRole())); //calling the set converter before user.getRole
 			pstmt.executeUpdate();
 		}
 	}
@@ -97,7 +100,12 @@ public class DatabaseHelper {
 		try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 			pstmt.setString(1, user.getUserName());
 			pstmt.setString(2, user.getPassword());
-			pstmt.setString(3, convertRolesToString(user.getRole())); //calling the set converter before usre.getRole
+			pstmt.setString(3, convertRolesToString(user.getRole())); //calling the set converter before user.getRole
+			//debugging print statements
+	        System.out.println("Attempting login with:");
+	        System.out.println("Username: " + user.getUserName());
+	        System.out.println("Password: " + user.getPassword());
+	        System.out.println("Roles: " + user.getRole());
 			try (ResultSet rs = pstmt.executeQuery()) {
 				return rs.next();
 			}

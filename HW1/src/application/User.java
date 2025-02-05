@@ -17,7 +17,9 @@ public class User {
         this.userName = userName;
         this.password = password;
         this.roles = new HashSet<>();
+        if (role != null && !role.isEmpty()) {
         this.addRole(role); // allows for the creation of new users with default "user" role
+        }
     }
 
     // Adds a role to the user's roles.
