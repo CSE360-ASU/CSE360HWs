@@ -5,6 +5,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+
+import java.util.Set;
+
 import databasePart1.*;
 
 /**
@@ -29,14 +32,21 @@ public class WelcomeLoginPage {
 	    // Button to navigate to the user's respective page based on their role
 	    Button continueButton = new Button("Continue to your Page");
 	    continueButton.setOnAction(a -> {
-	    	String role =user.getRole();
-	    	System.out.println(role);
-	    	
-	    	if(role.equals("admin")) {
-	    		new AdminHomePage().show(primaryStage);
+	    	Set<String> role =user.getRole();
+	    	//updated for multiple user roles, if a user has only 1 role (start counting from 0, they go to that page, otherwise to a role selection page
+	    	if (role.size() == 1) {
+	    		System.out.println("first if activated for role.size() == 1");
+		    	if(role.contains("admin")) {
+		    		new AdminHomePage(databaseHelper).show(primaryStage);
+		    	}
+		    	else if(role.contains("user")) {
+		    		new UserHomePage().show(primaryStage);
+		    	}
 	    	}
-	    	else if(role.equals("user")) {
-	    		new UserHomePage().show(primaryStage);
+	    	// user has > 1 role, go to role selection page (needs adjustment)
+	    	else {
+	    		System.out.println("Else activated");
+	    		new RoleSelectPage(databaseHelper).show(primaryStage, user);
 	    	}
 	    });
 	    
@@ -48,7 +58,8 @@ public class WelcomeLoginPage {
 	    });
 	    
 	    // "Invite" button for admin to generate invitation codes
-	    if ("admin".equals(user.getRole())) {
+//	    if ("admin".equals(user.getRole())) {
+	    if (user.getRole().contains("admin")) {	    //updated the role check to work with multiple user roles
             Button inviteButton = new Button("Invite");
             inviteButton.setOnAction(a -> {
                 new InvitationPage().show(databaseHelper, primaryStage);

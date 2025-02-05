@@ -1,8 +1,6 @@
 package application;
 
 import javafx.scene.Scene;
-
-
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -11,14 +9,11 @@ import java.sql.SQLException;
 
 import databasePart1.*;
 
-
-
-
 /**
  * SetupAccountPage class handles the account setup process for new users.
  * Users provide their userName, password, and a valid invitation code to register.
  */
-public class SetupAccountPage {
+public class SetupAccountPage extends PasswordEvaluator{
 	
     private final DatabaseHelper databaseHelper;
     // DatabaseHelper to handle database operations.
@@ -57,44 +52,48 @@ public class SetupAccountPage {
             String password = passwordField.getText();
             String code = inviteCodeField.getText();
             
-            String userNameCheck = UserNameRecognizer.checkForValidUserName(userName);
-            String passWordCheck = PasswordEvaluator.evaluatePassword(password);
+            //initialize errorMessage and check for valid userName/password
+            String errorMessage = "";
+            String userNameError = UserNameRecognizer.checkForValidUserName(userName);
+            String passwordError = PasswordEvaluator.evaluatePassword(password);
             
-            if (userNameCheck.isEmpty() && passWordCheck.isEmpty()) {
-            	try {
-                	// Check if the user already exists
-                	if(!databaseHelper.doesUserExist(userName)) {
-                		
-                		// Validate the invitation code
-                		if(databaseHelper.validateInvitationCode(code)) {
-                			
-                			// Create a new user and register them in the database
-    		            	User user=new User(userName, password, "user");
-    		                databaseHelper.register(user);
-    		                
-    		             // Navigate to the Welcome Login Page
-    		                new WelcomeLoginPage(databaseHelper).show(primaryStage,user);
-                		}
-                		else {
-                			errorLabel.setText("Please enter a valid invitation code");
-                		}
-                	}
-                	else {
-                		errorLabel.setText("This useruserName is taken!!.. Please use another to setup an account");
-                	}
-                	
-                } catch (SQLException e) {
-                    System.err.println("Database error: " + e.getMessage());
-                    e.printStackTrace();
-                }
+            if (!userNameError.isEmpty()) {
+            	errorMessage += userNameError + "\n";
             }
-            else {
-            	if(userNameCheck.isEmpty())
-            		System.out.println(passWordCheck);
-            	else
-            		System.out.println(userNameCheck);
+            if (!passwordError.isEmpty()) {
+            	errorMessage += passwordError + "\n";
             }
+            if (!errorMessage.isEmpty()) {
+            	errorLabel.setText(errorMessage);
+            	return;
+            }
+            
+            try {
+            	// Check if the user already exists
+            	if(!databaseHelper.doesUserExist(userName)) {
+            		
+            		// Validate the invitation code
+            		if(databaseHelper.validateInvitationCode(code)) {
+            			
+            			// Create a new user and register them in the database
+		            	User user=new User(userName, password, "user");
+		                databaseHelper.register(user);
+		                
+		             // Navigate to the Welcome Login Page
+		                new WelcomeLoginPage(databaseHelper).show(primaryStage,user);
+            		}
+            		else {
+            			errorLabel.setText("Please enter a valid invitation code");
+            		}
+            	}
+            	else {
+            		errorLabel.setText("This useruserName is taken!!.. Please use another to setup an account");
+            	}
             	
+            } catch (SQLException e) {
+                System.err.println("Database error: " + e.getMessage());
+                e.printStackTrace();
+            }
         });
 
         VBox layout = new VBox(10);

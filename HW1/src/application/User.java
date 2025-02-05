@@ -1,27 +1,38 @@
 package application;
 
+import java.util.Set;  // Import the Set and HashSet for user roles
+import java.util.HashSet;  
+
 /**
  * The User class represents a user entity in the system.
- * It contains the user's details such as userName, password, and role.
+ * It contains the user's details such as userName, password, and roles.
  */
 public class User {
     private String userName;
     private String password;
-    private String role;
+    private Set<String> roles; // user roles are a Set, to accommodate multiple roles
 
-    // Constructor to initialize a new User object with userName, password, and role.
-    public User( String userName, String password, String role) {
+    // Constructor to initialize a new User object
+    public User(String userName, String password, String role) {
         this.userName = userName;
         this.password = password;
-        this.role = role;
-    }
-    
-    // Sets the role of the user.
-    public void setRole(String role) {
-    	this.role=role;
+        this.roles = new HashSet<>();
+        if (role != null && !role.isEmpty()) {
+        this.addRole(role); // allows for the creation of new users with default "user" role
+        }
     }
 
+    // Adds a role to the user's roles.
+    public void addRole(String role) {
+        this.roles.add(role);
+    }
+
+    // Removes a role from the user's roles.
+    public void removeRole(String role) {
+        this.roles.remove(role);
+    }
+    // getRole returns a Set of strings containing all user assigned roles
+    public Set<String> getRole() { return roles; }
     public String getUserName() { return userName; }
     public String getPassword() { return password; }
-    public String getRole() { return role; }
 }
