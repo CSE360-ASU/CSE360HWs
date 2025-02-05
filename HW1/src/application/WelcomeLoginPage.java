@@ -37,7 +37,7 @@ public class WelcomeLoginPage {
 	    	//updated for multiple user roles, if a user has only 1 role, they go to that page, otherwise to a role selection page
 	    	if (role.size() == 1) {
 		    	if(role.contains("admin")) {
-		    		new AdminHomePage().show(primaryStage);
+		    		new AdminHomePage(databaseHelper).show(primaryStage);
 		    	}
 		    	else if(role.contains("user")) {
 		    		new UserHomePage().show(primaryStage);
@@ -45,7 +45,7 @@ public class WelcomeLoginPage {
 	    	}
 	    	// user has > 1 role, go to role selection page (needs adjustment)
 	    	else {
-	    		new RoleSelectPage().show(primaryStage);
+	    		new RoleSelectPage().show(primaryStage, user);
 	    	}
 	    });
 	    

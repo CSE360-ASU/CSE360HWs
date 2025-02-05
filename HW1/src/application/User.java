@@ -31,7 +31,7 @@ public class User {
     public void removeRole(String role) {
         this.roles.remove(role);
     }
-
+    // getRole returns a Set of strings containing all user assigned roles
     public Set<String> getRole() { return roles; }
     public String getUserName() { return userName; }
     public String getPassword() { return password; }

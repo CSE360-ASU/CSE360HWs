@@ -30,7 +30,7 @@ public class RoleSelectPage {
         Set<String> roles = user.getRole();
         if (roles.contains("admin")) {
             Button adminButton = new Button("Admin");
-            adminButton.setOnAction(a -> new AdminHomePage().show(primaryStage));
+            adminButton.setOnAction(a -> new AdminHomePage(null).show(primaryStage));
             layout.getChildren().add(adminButton);
         }
         if (roles.contains("student")) {

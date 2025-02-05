@@ -111,6 +111,19 @@ public class DatabaseHelper {
 			}
 		}
 	}
+
+	//method to add a role to user
+	//check that user exists and they are not currently assigned that role
+	public void addUserRole(String userName, String role) throws SQLException {
+		//String userName = user.getUserName();
+		User user = new User (userName, null, role);
+		Set<String> roles = user.getRole();
+	    DatabaseHelper dbHelper = new DatabaseHelper();
+	    dbHelper.connectToDatabase();
+		if (dbHelper.doesUserExist(userName) && !roles.contains(role)) {
+			user.addRole(role);
+		}
+	}
 	
 	// Checks if a user already exists in the database based on their userName.
 	public boolean doesUserExist(String userName) {
